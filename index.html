@@ -8,7 +8,9 @@
 
             var stereoscopic = null;
 
-            // See https://github.com/mrdoob/three.js/blob/master/examples/webgl_panorama_equirectangular.html
+            // This is heavily influenced by examples at:
+            // - https://github.com/mrdoob/three.js/blob/master/examples/webgl_panorama_equirectangular.html
+            // - 
             (function(id, path) {
 
                 var deg2rad = Math.PI / 180;
@@ -35,7 +37,6 @@
                     var texture = new THREE.TextureLoader().load(path);
                     var material = new THREE.MeshBasicMaterial( { map: texture } );
                     mesh = new THREE.Mesh( geometry, material );
-                    mesh.rotation.x = THREE.Math.degToRad( 90 );
                     scene.add( mesh );
                     renderer = new THREE.WebGLRenderer();
                     renderer.setPixelRatio( window.devicePixelRatio );
@@ -51,25 +52,31 @@
 
                     stereoscopic = function() {
                         isStereoscopic = true;
-                        // document.getElementById(id).requestFullscreen();
+                        container.style.position = "absolute";
+                        container.style.top = "0";
+                        container.style.left = "0";
+                        camera.aspect = screen.width / screen.height;
+                        camera.updateProjectionMatrix();
+                        renderer.setSize(
+                            screen.width * window.devicePixelRatio,
+                            screen.height * window.devicePixelRatio);
+
                         if (window.DeviceOrientationEvent &&
                             typeof(window.DeviceOrientationEvent.requestPermission) === "function") {
                             window.DeviceOrientationEvent.requestPermission().then(function() {
+                                mesh.rotation.x = THREE.Math.degToRad( 90 );
                                 window.addEventListener("deviceorientation", function(e) {
                                     camera.eulerOrder = "ZXY";
-                                    // camera.eulerOrder = "XYZ";
                                     camera.rotation.set (
                                         !e.beta  ? 0 : THREE.Math.degToRad( e.beta ),
                                         !e.gamma ? 0 : THREE.Math.degToRad( e.gamma ),
                                         !e.alpha ? 0 : THREE.Math.degToRad( e.alpha ),
                                     );
-                                    // camera.rotation.set (
-                                    //     !e.alpha ? 0 : THREE.Math.degToRad( e.alpha ),
-                                    //     !e.beta  ? 0 : THREE.Math.degToRad( e.beta ),
-                                    //     !e.gamma ? 0 : THREE.Math.degToRad( e.gamma ),
-                                    // );
                                     renderer.render( scene, camera );
                                 }, false);
+                                window.addEventListener("orientationchange", function() {
+                                    console.log("Orientation: " + window.orientation);
+                                });
                             });
                         }
                     }
