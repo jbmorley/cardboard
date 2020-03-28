@@ -1,0 +1,17 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+
+
+[packages]
+
+Flask = "*"
+gunicorn = "*"
+pytest = "*"
+pyopenssl = "*"
+
+
+[requires]
+
+python_version = "3"
