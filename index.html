@@ -1,9 +1,30 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            .container {
+                background-color: #f0f;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100px;
+                height: 100px;
+            }
+
+            .action-button {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+
+        </style>
     </head>
     <body>
-        <div id="1234"></div>
+        <div id="container" class="container">
+            <div id="1234"></div>
+            <button id="gyroscope" class="action-button">Use Gyroscope</button>
+        </div>
         <script src="https://threejs.org/build/three.js"></script>
         <!-- <script src="https://threejs.org/examples/jsm/controls/DeviceOrientationControls.js"></script> -->
         <script type="module" src="https://threejs.org/examples/jsm/controls/DeviceOrientationControls.js"></script>
@@ -19,8 +40,6 @@
             // - https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_deviceorientation.html
             (function(id, path) {
 
-                var deg2rad = Math.PI / 180;
-
                 var camera, scene, renderer, controls;
                 var isUserInteracting = false,
                     isAnimating = true,
@@ -29,6 +48,7 @@
                     lon = 0, onMouseDownLon = 0,
                     lat = 0, onMouseDownLat = 0,
                     phi = 0, theta = 0;
+
                 init();
                 animate();
 
@@ -39,7 +59,7 @@
 
                 function init() {
                     var container, mesh;
-                    container = document.getElementById(id);
+                    container = document.getElementById( id );
                     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
                     camera.target = new THREE.Vector3( 0, 0, 0 );
                     scene = new THREE.Scene();
@@ -65,11 +85,17 @@
                 }
 
                 function onWindowResize() {
-                    // Prefer a 4:3 aspect ratio
-                    var aspect = 4 / 3;
+                    var container = document.getElementById('container');
+                    container.style.width = window.innerWidth + "px";
+                    container.style.height = window.innerHeight + "px";
+
+                    var innerContainer = document.getElementById( id );
+                    innerContainer.style.width = innerContainer.parentElement.clientWidth + "px";
+                    innerContainer.style.height = innerContainer.parentElement.clientHeight + "px";
+
                     var width = renderer.domElement.parentElement.clientWidth;
-                    var height = width / aspect;
-                    camera.aspect = aspect;
+                    var height = renderer.domElement.parentElement.clientHeight;
+                    camera.aspect = width / height;
                     camera.updateProjectionMatrix();
                     renderer.setSize( width, height );
                 }
@@ -127,6 +153,5 @@
             })('1234', '603822945.523954.jpeg');
 
         </script>
-        <button id="gyroscope">Use Gyroscope</button>
     </body>
 </html>
