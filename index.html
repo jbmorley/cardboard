@@ -1,30 +1,42 @@
+<!DOCTYPE html>
 <html>
     <head>
     </head>
     <body>
         <div id="1234"></div>
         <script src="https://threejs.org/build/three.js"></script>
-        <script>
+        <!-- <script src="https://threejs.org/examples/jsm/controls/DeviceOrientationControls.js"></script> -->
+        <script type="module" src="https://threejs.org/examples/jsm/controls/DeviceOrientationControls.js"></script>
+        <script type="module">
 
             var stereoscopic = null;
 
+            // import * as THREE from 'https://threejs.org/build/three.js';
+            import { DeviceOrientationControls } from 'https://threejs.org/examples/jsm/controls/DeviceOrientationControls.js';
+
             // This is heavily influenced by examples at:
             // - https://github.com/mrdoob/three.js/blob/master/examples/webgl_panorama_equirectangular.html
-            // - 
+            // - https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_deviceorientation.html
             (function(id, path) {
 
                 var deg2rad = Math.PI / 180;
 
-                var camera, scene, renderer;
+                var camera, scene, renderer, controls;
                 var isUserInteracting = false,
+                    isAnimating = true,
+                    isStereoscopic = false,
                     onMouseDownMouseX = 0, onMouseDownMouseY = 0,
                     lon = 0, onMouseDownLon = 0,
                     lat = 0, onMouseDownLat = 0,
-                    phi = 0, theta = 0,
-                    isAnimating = true,
-                    isStereoscopic = false;
+                    phi = 0, theta = 0;
                 init();
                 animate();
+
+                document.getElementById('gyroscope').addEventListener('click', function () {
+                    isStereoscopic = true;
+                    controls = new DeviceOrientationControls( camera );
+                }, false );
+
                 function init() {
                     var container, mesh;
                     container = document.getElementById(id);
@@ -49,40 +61,9 @@
                     window.addEventListener( 'touchmove', onPointerMove, { passive: false } );
                     window.addEventListener( 'touchend', onPointerUp, { passive: false } );
                     window.addEventListener( 'resize', onWindowResize, false );
-
-                    stereoscopic = function() {
-                        isStereoscopic = true;
-                        container.style.position = "absolute";
-                        container.style.top = "0";
-                        container.style.left = "0";
-                        camera.aspect = screen.width / screen.height;
-                        camera.updateProjectionMatrix();
-                        renderer.setSize(
-                            screen.width * window.devicePixelRatio,
-                            screen.height * window.devicePixelRatio);
-
-                        if (window.DeviceOrientationEvent &&
-                            typeof(window.DeviceOrientationEvent.requestPermission) === "function") {
-                            window.DeviceOrientationEvent.requestPermission().then(function() {
-                                mesh.rotation.x = THREE.Math.degToRad( 90 );
-                                window.addEventListener("deviceorientation", function(e) {
-                                    camera.eulerOrder = "ZXY";
-                                    camera.rotation.set (
-                                        !e.beta  ? 0 : THREE.Math.degToRad( e.beta ),
-                                        !e.gamma ? 0 : THREE.Math.degToRad( e.gamma ),
-                                        !e.alpha ? 0 : THREE.Math.degToRad( e.alpha ),
-                                    );
-                                    renderer.render( scene, camera );
-                                }, false);
-                                window.addEventListener("orientationchange", function() {
-                                    console.log("Orientation: " + window.orientation);
-                                });
-                            });
-                        }
-                    }
-
                     onWindowResize();
                 }
+
                 function onWindowResize() {
                     // Prefer a 4:3 aspect ratio
                     var aspect = 4 / 3;
@@ -92,6 +73,7 @@
                     camera.updateProjectionMatrix();
                     renderer.setSize( width, height );
                 }
+
                 function onPointerStart( event ) {
                     isUserInteracting = true;
                     isAnimating = false;
@@ -103,6 +85,7 @@
                     onMouseDownLat = lat;
                     event.preventDefault();
                 }
+
                 function onPointerMove( event ) {
                     if ( isUserInteracting === true ) {
                         var clientX = event.clientX || event.touches[ 0 ].clientX;
@@ -112,15 +95,20 @@
                         event.preventDefault();
                     }
                 }
+
                 function onPointerUp() {
                     isUserInteracting = false;
                 }
+
                 function animate() {
                     requestAnimationFrame( animate );
                     update();
                 }
+
                 function update() {
                     if ( isStereoscopic ) {
+                        controls.update();
+                        renderer.render( scene, camera );
                         return;
                     }
                     if ( isUserInteracting === false && isAnimating === true ) {
@@ -137,7 +125,8 @@
                 }
 
             })('1234', '603822945.523954.jpeg');
+
         </script>
-        <a href="javascript:stereoscopic()">Stereoscopic<a>
+        <button id="gyroscope">Use Gyroscope</button>
     </body>
 </html>
