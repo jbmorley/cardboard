@@ -37,13 +37,14 @@
 
             // import * as THREE from 'https://threejs.org/build/three.js';
             import { DeviceOrientationControls } from 'https://threejs.org/examples/jsm/controls/DeviceOrientationControls.js';
+            import { StereoEffect } from 'https://threejs.org/examples/jsm/effects/StereoEffect.js';
 
             // This is heavily influenced by examples at:
             // - https://github.com/mrdoob/three.js/blob/master/examples/webgl_panorama_equirectangular.html
             // - https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_deviceorientation.html
             (function(id, path) {
 
-                var camera, scene, renderer, controls;
+                var camera, scene, renderer, controls, effect;
                 var isUserInteracting = false,
                     isAnimating = true,
                     isStereoscopic = false,
@@ -58,6 +59,8 @@
                 document.getElementById('gyroscope').addEventListener('click', function () {
                     isStereoscopic = true;
                     controls = new DeviceOrientationControls( camera );
+                    effect = new StereoEffect( renderer );
+                    onResize();
                 }, false );
 
                 function init() {
@@ -103,7 +106,12 @@
                     var height = renderer.domElement.parentElement.clientHeight;
                     camera.aspect = width / height;
                     camera.updateProjectionMatrix();
-                    renderer.setSize( width, height );
+                    if ( isStereoscopic ) {
+                        // effect = new StereoEffect( renderer );
+                        effect.setSize( width, height );
+                    } else {
+                        renderer.setSize( width, height );
+                    }
                 }
 
                 function onPointerStart( event ) {
@@ -140,7 +148,8 @@
                 function update() {
                     if ( isStereoscopic ) {
                         controls.update();
-                        renderer.render( scene, camera );
+                        // renderer.render( scene, camera );
+                        effect.render( scene, camera );
                         return;
                     }
                     if ( isUserInteracting === false && isAnimating === true ) {
