@@ -3,20 +3,9 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="cardboard.css">
-        <style>
-
-            .image {
-                width: 200px;
-                height: 150px;
-                border: 1px solid black;
-            }
-
-        </style>
     </head>
     <body>
-        <div class="image">
-            <div id="1234"></div>
-        </div>
+        <div id="1234"></div>
         <script type="module">
             import { Cardboard } from './cardboard.js';
             var viewer = new Cardboard.Viewer('1234', '603822945.523954.jpeg');
