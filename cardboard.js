@@ -26,7 +26,7 @@ var Cardboard = {
             isUserInteracting = false,
             isFullscreen = false,
             mode = Mode.animated,
-            container = null,
+            parent, container,
             previousStyle = null;
 
         init();
@@ -34,7 +34,9 @@ var Cardboard = {
 
         function init() {
             var mesh;
-            container = document.getElementById( id );
+            parent = document.getElementById( id );
+            container = document.createElement( 'div' );
+            parent.appendChild( container );
             container.classList.add( 'cardboard-viewer' );
             camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
             camera.target = new THREE.Vector3( 0, 0, 0 );
@@ -102,6 +104,8 @@ var Cardboard = {
 
         function enterFullscreen() {
             isFullscreen = true;
+            parent.removeChild( container );
+            document.body.appendChild( container );
             container.classList.add( 'fullscreen' );
             onWindowResize();
             onResize();
@@ -109,6 +113,8 @@ var Cardboard = {
 
         function leaveFullscreen() {
             isFullscreen = false;
+            document.body.removeChild( container );
+            parent.appendChild( container );
             container.classList.remove( 'fullscreen' );
             onWindowResize();
             onResize();
@@ -118,6 +124,9 @@ var Cardboard = {
             if ( isFullscreen ) {
                 container.style.width = window.innerWidth + "px";
                 container.style.height = window.innerHeight + "px";
+            } else {
+                container.style.width = "auto";
+                container.style.height = "auto";
             }
         }
 
@@ -127,8 +136,9 @@ var Cardboard = {
                 width = renderer.domElement.parentElement.clientWidth;
                 height = renderer.domElement.parentElement.clientHeight;
             } else {
-                width = container.parentElement.clientWidth;
-                height = container.parentElement.clientHeight;
+                var aspect = 4 / 3; // Prefer a 4:3 aspect ratio.
+                width = parent.clientWidth;
+                height = width / aspect;
             }
 
             camera.aspect = width / height;
