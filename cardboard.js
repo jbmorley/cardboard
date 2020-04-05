@@ -10,14 +10,21 @@ var Cardboard = {
 
     Viewer: function(id, path) {
 
+        const Mode = {
+            animated: 1,
+            interactive: 2,
+            gyroscopic: 3,
+            stereoscopic: 4,
+        }
+        Object.freeze(Mode)
+
         var camera, scene, renderer, controls, effect;
-        var isUserInteracting = false,
-            isAnimating = true,
-            isStereoscopic = false,
-            onMouseDownMouseX = 0, onMouseDownMouseY = 0,
+        var onMouseDownMouseX = 0, onMouseDownMouseY = 0,
             lon = 0, onMouseDownLon = 0,
             lat = 0, onMouseDownLat = 0,
-            phi = 0, theta = 0;
+            phi = 0, theta = 0,
+            isUserInteracting = false,
+            mode = Mode.animated;
 
         init();
         animate();
@@ -41,15 +48,10 @@ var Cardboard = {
             container.appendChild( element );
 
             // If the device supports orientation, also add a button to allow for gyroscopic controls.
-            var button = document.createElement("button");
+            var button = document.createElement( "button" );
             button.innerHTML = "Use Gyroscope";
-            button.classList.add('action-button');
-            button.addEventListener('click', function () {
-                isStereoscopic = true;
-                controls = new DeviceOrientationControls( camera );
-                effect = new StereoEffect( renderer );
-                onResize();
-            }, false );
+            button.classList.add( 'action-button' );
+            button.addEventListener( 'click', onUseGyroscope, false );
             container.appendChild( button );
 
             element.addEventListener( 'mousedown', onPointerStart, { passive: false } );
@@ -60,8 +62,27 @@ var Cardboard = {
             window.addEventListener( 'touchend', onPointerUp, { passive: false } );
             window.addEventListener( 'resize', onWindowResize, false );
             window.addEventListener( 'resize', onResize, false );
+            window.addEventListener( 'orientationchange', onOrientationChange );
             onWindowResize();
             onResize();
+        }
+
+        function onUseGyroscope() {
+            mode = Mode.stereoscopic;
+            controls = new DeviceOrientationControls( camera );
+            effect = new StereoEffect( renderer );
+            onResize();
+        }
+
+        function onOrientationChange() {
+            if ( mode == Mode.animated || mode == Mode.interactive ) {
+                return;
+            }
+            if ( window.orientation == -90 || window.orientation == 90 ) {
+                mode = Mode.stereoscopic;
+            } else {
+                mode = Mode.gyroscopic;
+            }
         }
 
         function onWindowResize() {
@@ -78,8 +99,7 @@ var Cardboard = {
             var height = renderer.domElement.parentElement.clientHeight;
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
-            if ( isStereoscopic ) {
-                // effect = new StereoEffect( renderer );
+            if ( mode == Mode.stereoscopic ) {
                 effect.setSize( width, height );
             } else {
                 renderer.setSize( width, height );
@@ -87,8 +107,12 @@ var Cardboard = {
         }
 
         function onPointerStart( event ) {
+            if ( mode == Mode.animated || mode == Mode.interactive ) {
+                mode = Mode.interactive;
+            } else {
+                return;
+            }
             isUserInteracting = true;
-            isAnimating = false;
             var clientX = event.clientX || event.touches[ 0 ].clientX;
             var clientY = event.clientY || event.touches[ 0 ].clientY;
             onMouseDownMouseX = clientX;
@@ -118,23 +142,25 @@ var Cardboard = {
         }
 
         function update() {
-            if ( isStereoscopic ) {
+            if ( mode == Mode.gyroscopic ) {
                 controls.update();
-                // renderer.render( scene, camera );
+                renderer.render( scene, camera );
+            } else if ( mode == Mode.stereoscopic ) {
+                controls.update();
                 effect.render( scene, camera );
-                return;
+            } else if ( mode == Mode.animated || mode == Mode.interactive ) {
+                if ( mode == Mode.animated ) {
+                    lon += 0.1;
+                }
+                lat = Math.max( - 85, Math.min( 85, lat ) );
+                phi = THREE.Math.degToRad( 90 - lat );
+                theta = THREE.Math.degToRad( lon );
+                camera.target.x = 500 * Math.sin( phi ) * Math.cos( theta );
+                camera.target.y = 500 * Math.cos( phi );
+                camera.target.z = 500 * Math.sin( phi ) * Math.sin( theta );
+                camera.lookAt( camera.target );
+                renderer.render( scene, camera );
             }
-            if ( isUserInteracting === false && isAnimating === true ) {
-                lon += 0.1;
-            }
-            lat = Math.max( - 85, Math.min( 85, lat ) );
-            phi = THREE.Math.degToRad( 90 - lat );
-            theta = THREE.Math.degToRad( lon );
-            camera.target.x = 500 * Math.sin( phi ) * Math.cos( theta );
-            camera.target.y = 500 * Math.cos( phi );
-            camera.target.z = 500 * Math.sin( phi ) * Math.sin( theta );
-            camera.lookAt( camera.target );
-            renderer.render( scene, camera );
         }
 
     },
