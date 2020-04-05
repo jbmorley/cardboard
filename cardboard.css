@@ -1,16 +1,15 @@
-body {
-    background-color: #000;
+.cardboard-viewer {
+    position: relative;
 }
 
-.container {
+.cardboard-viewer.fullscreen {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100px;
-    height: 100px;
+    z-index: 100;
 }
 
-.action-button {
+.cardboard-viewer > .action-button {
     position: absolute;
     top: 0;
     left: 0;

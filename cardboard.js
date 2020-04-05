@@ -24,16 +24,18 @@ var Cardboard = {
             lat = 0, onMouseDownLat = 0,
             phi = 0, theta = 0,
             isUserInteracting = false,
+            isFullscreen = false,
             mode = Mode.animated,
-            fullscreenElement = null, container = null;
+            container = null,
+            previousStyle = null;
 
         init();
         animate();
 
         function init() {
             var mesh;
-            fullscreenElement = document.getElementById('container');
             container = document.getElementById( id );
+            container.classList.add( 'cardboard-viewer' );
             camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
             camera.target = new THREE.Vector3( 0, 0, 0 );
             scene = new THREE.Scene();
@@ -70,10 +72,17 @@ var Cardboard = {
         }
 
         function onUseGyroscope() {
-            controls = new DeviceOrientationControls( camera );
-            effect = new StereoEffect( renderer );
-            mode = modeForOrientation()
-            onResize();
+            if ( mode == Mode.interactive || mode == Mode.animated ) {
+                controls = new DeviceOrientationControls( camera );
+                effect = new StereoEffect( renderer );
+                mode = modeForOrientation();
+                enterFullscreen();
+            } else {
+                controls = null;
+                effect = null;
+                mode = Mode.interactive;
+                leaveFullscreen();
+            }
         }
 
         function modeForOrientation() {
@@ -91,16 +100,37 @@ var Cardboard = {
             mode = modeForOrientation();
         }
 
+        function enterFullscreen() {
+            isFullscreen = true;
+            container.classList.add( 'fullscreen' );
+            onWindowResize();
+            onResize();
+        }
+
+        function leaveFullscreen() {
+            isFullscreen = false;
+            container.classList.remove( 'fullscreen' );
+            onWindowResize();
+            onResize();
+        }
+
         function onWindowResize() {
-            fullscreenElement.style.width = window.innerWidth + "px";
-            fullscreenElement.style.height = window.innerHeight + "px";
-            container.style.width = container.parentElement.clientWidth + "px";
-            container.style.height = container.parentElement.clientHeight + "px";
+            if ( isFullscreen ) {
+                container.style.width = window.innerWidth + "px";
+                container.style.height = window.innerHeight + "px";
+            }
         }
 
         function onResize() {
-            var width = renderer.domElement.parentElement.clientWidth;
-            var height = renderer.domElement.parentElement.clientHeight;
+            var width, height;
+            if ( isFullscreen ) {
+                width = renderer.domElement.parentElement.clientWidth;
+                height = renderer.domElement.parentElement.clientHeight;
+            } else {
+                width = container.parentElement.clientWidth;
+                height = container.parentElement.clientHeight;
+            }
+
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
             if ( mode == Mode.stereoscopic ) {
