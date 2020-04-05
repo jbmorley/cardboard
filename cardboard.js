@@ -24,13 +24,15 @@ var Cardboard = {
             lat = 0, onMouseDownLat = 0,
             phi = 0, theta = 0,
             isUserInteracting = false,
-            mode = Mode.animated;
+            mode = Mode.animated,
+            fullscreenElement = null, container = null;
 
         init();
         animate();
 
         function init() {
-            var container, mesh;
+            var mesh;
+            fullscreenElement = document.getElementById('container');
             container = document.getElementById( id );
             camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
             camera.target = new THREE.Vector3( 0, 0, 0 );
@@ -68,30 +70,32 @@ var Cardboard = {
         }
 
         function onUseGyroscope() {
-            mode = Mode.stereoscopic;
             controls = new DeviceOrientationControls( camera );
             effect = new StereoEffect( renderer );
+            mode = modeForOrientation()
             onResize();
+        }
+
+        function modeForOrientation() {
+            if ( window.orientation == -90 || window.orientation == 90 ) {
+                return Mode.stereoscopic;
+            } else {
+                return Mode.gyroscopic;
+            }
         }
 
         function onOrientationChange() {
             if ( mode == Mode.animated || mode == Mode.interactive ) {
                 return;
             }
-            if ( window.orientation == -90 || window.orientation == 90 ) {
-                mode = Mode.stereoscopic;
-            } else {
-                mode = Mode.gyroscopic;
-            }
+            mode = modeForOrientation();
         }
 
         function onWindowResize() {
-            var container = document.getElementById('container');
-            container.style.width = window.innerWidth + "px";
-            container.style.height = window.innerHeight + "px";
-            var innerContainer = document.getElementById( id );
-            innerContainer.style.width = innerContainer.parentElement.clientWidth + "px";
-            innerContainer.style.height = innerContainer.parentElement.clientHeight + "px";
+            fullscreenElement.style.width = window.innerWidth + "px";
+            fullscreenElement.style.height = window.innerHeight + "px";
+            container.style.width = container.parentElement.clientWidth + "px";
+            container.style.height = container.parentElement.clientHeight + "px";
         }
 
         function onResize() {
