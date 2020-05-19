@@ -10,3 +10,13 @@ iOS 13 limits use of the accelerator to secure websites, meaning that it is nece
 pipenv install
 pipenv run python3 service.py
 ```
+
+## Usage
+
+```html
+<div data-src="603822945.523954.jpeg" data-projection="equirectangular"></div>
+<script type="module">
+    import { Cardboard } from './cardboard.js';
+    Cardboard.initialize( document.body );
+</script>
+```
