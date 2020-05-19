@@ -228,10 +228,8 @@ var Cardboard = {
 
         const observer = new MutationObserver( function( mutations, observer ) {
             mutations.forEach( function( mutation ) {
-                console.log( mutation.addedNodes );
                 for ( let i = 0; i < mutation.addedNodes.length; i++ ) {
                     let node = mutation.addedNodes[i];
-                    console.log( node );
                     attach( node );
                 }
             } );
