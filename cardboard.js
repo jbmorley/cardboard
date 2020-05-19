@@ -212,13 +212,31 @@ var Cardboard = {
 
     initialize: function( root ) {
 
-        var elements = document.evaluate( "//div[@data-type='cardboard']", root, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );
-        for ( let i = 0, length = elements.snapshotLength; i < length; ++i ) {
-            var element = elements.snapshotItem(i);
-            console.log( element );
-            console.log( element.getAttribute('src') );
-            new Cardboard.Viewer( element, element.getAttribute('src') );
+        attach( root );
+
+        function attach( root ) {
+            var elements = document.evaluate( "//div[@data-type='cardboard']", root, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );
+            for ( let i = 0, length = elements.snapshotLength; i < length; ++i ) {
+                var element = elements.snapshotItem( i );
+                if ( element.getAttribute( 'data-attached' ) ) {
+                    continue;
+                }
+                new Cardboard.Viewer( element, element.getAttribute('data-src') );
+                element.setAttribute( 'data-attached', true );
+            }
         }
+
+        const observer = new MutationObserver( function( mutations, observer ) {
+            mutations.forEach( function( mutation ) {
+                console.log( mutation.addedNodes );
+                for ( let i = 0; i < mutation.addedNodes.length; i++ ) {
+                    let node = mutation.addedNodes[i];
+                    console.log( node );
+                    attach( node );
+                }
+            } );
+        } );
+        observer.observe( document.body, { attributes: true, childList: true, subtree: true } );
 
     },
 

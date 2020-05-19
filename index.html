@@ -6,14 +6,18 @@
     </head>
     <body>
         <div id="1234"></div>
+        <div data-type="cardboard" data-src="603822945.523954.jpeg"></div>
         <script type="module">
             import { Cardboard } from './cardboard.js';
-            var viewer = new Cardboard.Viewer( document.getElementById('1234'), '603822945.523954.jpeg' );
+            Cardboard.initialize( document.body );
         </script>
-        <div data-type="cardboard" src="603822945.523954.jpeg"></div>
-        <script type="module">
-            import { Cardboard } from './cardboard.js';
-            Cardboard.initialize( document );
+        <script>
+            function addElement() {
+                var element = document.createElement("div")
+                element.innerHTML = '<div data-type="cardboard" data-src="603822945.523954.jpeg"></div>';
+                document.body.appendChild( element );
+            }
         </script>
+        <input type="button" value="Add Element" onclick="addElement()" />
     </body>
 </html>
