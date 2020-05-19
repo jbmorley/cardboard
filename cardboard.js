@@ -35,7 +35,6 @@ var Cardboard = {
 
         function init() {
             var mesh;
-            // parent = document.getElementById( id );
             container = document.createElement( 'div' );
             parent.appendChild( container );
             container.classList.add( 'cardboard-viewer' );
