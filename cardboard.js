@@ -215,7 +215,7 @@ var Cardboard = {
         attach( root );
 
         function attach( root ) {
-            var elements = document.evaluate( "//div[@data-type='cardboard']", root, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );
+            var elements = document.evaluate( "//div[@data-projection='equirectangular']", root, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );
             for ( let i = 0, length = elements.snapshotLength; i < length; ++i ) {
                 var element = elements.snapshotItem( i );
                 if ( element.getAttribute( 'data-attached' ) ) {

@@ -6,7 +6,7 @@
     </head>
     <body>
         <div id="1234"></div>
-        <div data-type="cardboard" data-src="603822945.523954.jpeg"></div>
+        <div data-src="603822945.523954.jpeg" data-projection="equirectangular"></div>
         <script type="module">
             import { Cardboard } from './cardboard.js';
             Cardboard.initialize( document.body );
@@ -14,7 +14,7 @@
         <script>
             function addElement() {
                 var element = document.createElement("div")
-                element.innerHTML = '<div data-type="cardboard" data-src="603822945.523954.jpeg"></div>';
+                element.innerHTML = '<div data-src="603822945.523954.jpeg" data-projection="equirectangular"></div>';
                 document.body.appendChild( element );
             }
         </script>
