@@ -8,7 +8,12 @@
         <div id="1234"></div>
         <script type="module">
             import { Cardboard } from './cardboard.js';
-            var viewer = new Cardboard.Viewer('1234', '603822945.523954.jpeg');
+            var viewer = new Cardboard.Viewer( document.getElementById('1234'), '603822945.523954.jpeg' );
+        </script>
+        <div data-type="cardboard" src="603822945.523954.jpeg"></div>
+        <script type="module">
+            import { Cardboard } from './cardboard.js';
+            Cardboard.initialize( document );
         </script>
     </body>
 </html>

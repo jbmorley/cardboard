@@ -8,7 +8,7 @@ import { StereoEffect } from 'https://threejs.org/examples/jsm/effects/StereoEff
 
 var Cardboard = {
 
-    Viewer: function(id, path) {
+    Viewer: function(element, path) {
 
         const Mode = {
             animated: 1,
@@ -29,12 +29,13 @@ var Cardboard = {
             parent, container,
             previousStyle = null;
 
+        parent = element;
         init();
         animate();
 
         function init() {
             var mesh;
-            parent = document.getElementById( id );
+            // parent = document.getElementById( id );
             container = document.createElement( 'div' );
             parent.appendChild( container );
             container.classList.add( 'cardboard-viewer' );
@@ -205,6 +206,18 @@ var Cardboard = {
                 camera.lookAt( camera.target );
                 renderer.render( scene, camera );
             }
+        }
+
+    },
+
+    initialize: function( root ) {
+
+        var elements = document.evaluate( "//div[@data-type='cardboard']", root, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );
+        for ( let i = 0, length = elements.snapshotLength; i < length; ++i ) {
+            var element = elements.snapshotItem(i);
+            console.log( element );
+            console.log( element.getAttribute('src') );
+            new Cardboard.Viewer( element, element.getAttribute('src') );
         }
 
     },
