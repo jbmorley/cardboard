@@ -239,4 +239,4 @@ var Cardboard = {
 
 }
 
-export { Cardboard };
+Cardboard.initialize( document.body );
