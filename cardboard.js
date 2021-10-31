@@ -1,6 +1,6 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
-import { DeviceOrientationControls } from 'https://threejs.org/examples/jsm/controls/DeviceOrientationControls.js';
-import { StereoEffect } from 'https://threejs.org/examples/jsm/effects/StereoEffect.js';
+import { DeviceOrientationControls } from './libs/DeviceOrientationControls.js';
+import { StereoEffect } from './libs/StereoEffect.js';
 
 // This is heavily influenced by examples at:
 // - https://github.com/mrdoob/three.js/blob/master/examples/webgl_panorama_equirectangular.html
