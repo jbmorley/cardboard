@@ -197,8 +197,8 @@ var Cardboard = {
                     lon += 0.1;
                 }
                 lat = Math.max( - 85, Math.min( 85, lat ) );
-                phi = THREE.Math.degToRad( 90 - lat );
-                theta = THREE.Math.degToRad( lon );
+                phi = THREE.MathUtils.degToRad( 90 - lat );
+                theta = THREE.MathUtils.degToRad( lon );
                 camera.target.x = 500 * Math.sin( phi ) * Math.cos( theta );
                 camera.target.y = 500 * Math.cos( phi );
                 camera.target.z = 500 * Math.sin( phi ) * Math.sin( theta );
