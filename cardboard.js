@@ -1,4 +1,4 @@
-import * as THREE from 'https://threejs.org/build/three.module.js';
+import * as THREE from 'https://unpkg.com/three@0.141.0/build/three.module.js';
 import { DeviceOrientationControls } from './libs/DeviceOrientationControls.js';
 import { StereoEffect } from './libs/StereoEffect.js';
 
