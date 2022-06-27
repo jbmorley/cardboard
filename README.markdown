@@ -14,7 +14,11 @@ pipenv run python3 service.py
 ## Usage
 
 ```html
-<div data-src="603822945.523954.jpeg" data-projection="equirectangular"></div>
+<div
+     data-src="603822945.523954.jpeg"
+     data-projection="equirectangular">
+</div>
+...
 <script type="module">
     import { Cardboard } from './cardboard.js';
     Cardboard.initialize( document.body );
