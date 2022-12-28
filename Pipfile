@@ -1,5 +1,6 @@
 [[source]]
 
+name = "pypi"
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 
@@ -8,8 +9,9 @@ verify_ssl = true
 
 Flask = "*"
 gunicorn = "*"
-pytest = "*"
 pyopenssl = "*"
+pytest = "*"
+setuptools = ">=65.5.1"
 
 
 [requires]
