@@ -19,7 +19,8 @@
 import logging
 import os
 
-from flask import Flask, escape, request, jsonify, send_from_directory, g, make_response, redirect
+from flask import Flask, request, jsonify, send_from_directory, g, make_response, redirect
+from markupsafe import escape
 
 
 ROOT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
